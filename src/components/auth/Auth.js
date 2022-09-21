@@ -1,4 +1,6 @@
 import { useState, Fragment } from 'react';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../../store/auth-store';
 // components
 import Header from '../header/Header';
 // css classes
@@ -12,8 +14,54 @@ const Auth = () => {
   const [formMode, setFormMode] = useState(AuthConstants.loginMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
   const emailPattern = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+";
   const passwordPattern = "^[A-Za-z0-9]{6,}$";
+
+  const auth = async (payload) => {
+    const mode = payload.mode;
+    let url = AuthConstants.loginUrl;
+
+    if (mode === AuthConstants.signupMode) {
+      url = AuthConstants.signupUrl;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        email: payload.email,
+        password: payload.password,
+        returnSecureToken: true
+      })
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      const error = new Error(
+        responseData.message || AuthConstants.customErrorMsg
+      );
+      throw error;
+    }
+
+    const expiresIn = +responseData.expiresIn * 1000;
+    // const expiresIn = 5000;
+    const expirationDate = new Date().getTime() + expiresIn;
+
+    localStorage.setItem('token', responseData.idToken);
+    localStorage.setItem('userId', responseData.localId);
+    localStorage.setItem('expiresIn', expiresIn);
+    localStorage.setItem('tokenExpiration', expirationDate);
+
+    dispatch(authActions.auth({
+      token: responseData.idToken,
+      userId: responseData.localId,
+      isAuthenticated: true,
+      tokenTimer: setTimeout(() => {
+        dispatch(authActions.logout());
+      }, expiresIn)
+    }));
+  };
 
   const updateEmail = (event) => {
     setEmail(event.target.value.trim());
@@ -35,12 +83,28 @@ const Auth = () => {
     }
   };
 
+  const submitForm = async (event) => {
+    event.preventDefault();
+
+    const actionPayload = {
+      email: email,
+      password: password,
+      mode: formMode
+    };
+
+    try {
+      await auth(actionPayload);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  
   return (
-    <Fragment>
+      <Fragment>
         <Header />
         <main className={classes.auth}>
           <section>
-            <form>
+            <form onSubmit={submitForm}>
               <div className={classes.control}>
                 <label htmlFor='email'>{AuthConstants.emailText}</label>
                 <input
