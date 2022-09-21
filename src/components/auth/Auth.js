@@ -4,7 +4,6 @@ import { authActions } from '../../store/auth-store';
 // components
 import BaseDialog from '../base-dialog/BaseDialog';
 import BaseSpinner from '../base-spinner/BaseSpinner';
-import Header from '../header/Header';
 // css classes
 import classes from './Auth.module.css';
 // constants
@@ -113,7 +112,6 @@ const Auth = () => {
   
   return (
       <Fragment>
-        <Header />
         <main className={classes.auth}>
           <BaseDialog
             open={!!error}
