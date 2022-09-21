@@ -1,0 +1,14 @@
+.sortby-filter-section {
+  margin: 0 10%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.sortby-filter-text {
+  line-height: 72px;
+  color: white;
+}
+
+.sort-select {
+  background-color: white;
+}
