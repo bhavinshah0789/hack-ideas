@@ -3,7 +3,11 @@
 import { initializeApp } from 'firebase/app';
 import {
   getFirestore,
+  doc,
+  setDoc,
 } from "firebase/firestore";
+// constants
+import EventSortFilterConstants from '../data/EventSortFilterConstants';
 
 const HackIdeasAPIConstants = {
   firebaseApp: null,
@@ -27,6 +31,10 @@ const HackIdeasAPI = {
 
     HackIdeasAPIConstants.firebaseApp = initializeApp(firebaseConfig);
     HackIdeasAPIConstants.firebaseDb = getFirestore(HackIdeasAPIConstants.firebaseApp);
+  },
+  addEvent: async (eventData) => {
+    const eventRef = doc(HackIdeasAPIConstants.firebaseDb, "events", eventData.eventId);
+    await setDoc(eventRef, eventData);
   },
 };
 

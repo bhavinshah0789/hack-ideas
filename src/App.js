@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Auth from './components/auth/Auth';
 import EventPage from './components/event-page/EventPage';
 import Header from './components/header/Header';
+import AddEvent from './components/add-event/AddEvent';
 // store
 import { authActions } from './store/auth-store';
 
@@ -33,8 +34,8 @@ function App() {
 
   return (
     <Fragment>
-      <Header />
       <BrowserRouter>
+        <Header />
         <Route exact path="/">
           {isAuthenticated ? <Redirect to="/events" /> : <Redirect to="/login" />}
         </Route>
@@ -44,6 +45,10 @@ function App() {
         </Route>
         <Route path="/events">
           {isAuthenticated && <EventPage />}
+          {!isAuthenticated && <Redirect to="/login" />}
+        </Route>
+        <Route path="/addEvent">
+          {isAuthenticated && <AddEvent />}
           {!isAuthenticated && <Redirect to="/login" />}
         </Route>
       </BrowserRouter>

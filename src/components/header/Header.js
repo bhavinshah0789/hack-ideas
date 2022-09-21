@@ -1,3 +1,4 @@
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 // css classes
 import classes from './Header.module.css';
@@ -7,12 +8,18 @@ import HeaderConstants from '../../data/HeaderConstants';
 import { authActions } from '../../store/auth-store';
 
 const Header = (props) => {
+  const isAddEvent = useRouteMatch('/addEvent');
   const dispatch = useDispatch();
+  const history = useHistory();
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   const logout = () => {
     dispatch(authActions.logout());
   };
+
+  const addEventHandler = () => {
+    history.push('/addEvent');
+  }
 
   return (
     <header className={classes.header}>
@@ -22,9 +29,10 @@ const Header = (props) => {
           <ul>
             <li>
               {
-                !props.hideAddEventBtn &&
+                !isAddEvent &&
                 <button
                   type="button"
+                  onClick={addEventHandler}
                 >
                   {HeaderConstants.addEventText}
                 </button>
