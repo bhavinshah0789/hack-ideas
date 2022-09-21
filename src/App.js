@@ -1,6 +1,9 @@
+// components
+import Auth from './components/auth/Auth';
+
 function App() {
   return (
-    <div style={{color: "white"}}>Application</div>
+    <Auth />
   );
 }
 
