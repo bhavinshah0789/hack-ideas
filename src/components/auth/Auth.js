@@ -2,6 +2,8 @@ import { useState, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { authActions } from '../../store/auth-store';
 // components
+import BaseDialog from '../base-dialog/BaseDialog';
+import BaseSpinner from '../base-spinner/BaseSpinner';
 import Header from '../header/Header';
 // css classes
 import classes from './Auth.module.css';
@@ -12,11 +14,17 @@ const Auth = () => {
   const [submitButtonCaption, setSubmitButtonCaption] = useState(AuthConstants.loginText);
   const [formCaption, setFormCaption] = useState(AuthConstants.signupInsteadText);
   const [formMode, setFormMode] = useState(AuthConstants.loginMode);
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const emailPattern = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+";
   const passwordPattern = "^[A-Za-z0-9]{6,}$";
+
+  const handleError = () => {
+    setError(null);
+  }
 
   const auth = async (payload) => {
     const mode = payload.mode;
@@ -85,6 +93,8 @@ const Auth = () => {
 
   const submitForm = async (event) => {
     event.preventDefault();
+    
+    setIsLoading(true);
 
     const actionPayload = {
       email: email,
@@ -95,14 +105,28 @@ const Auth = () => {
     try {
       await auth(actionPayload);
     } catch (err) {
-      console.log(err);
+      setError(err.message || AuthConstants.customErrorMsg);
     }
+
+    setIsLoading(false);
   };
   
   return (
       <Fragment>
         <Header />
         <main className={classes.auth}>
+          <BaseDialog
+            open={!!error}
+            title={AuthConstants.dialogErrorTitle}
+            desc={error}
+            closeDialog={handleError}
+          />
+          <BaseDialog
+            open={isLoading}
+            hideActions={true}
+            title={AuthConstants.loadingText}
+            desc={<BaseSpinner/>}
+          />
           <section>
             <form onSubmit={submitForm}>
               <div className={classes.control}>
