@@ -5,10 +5,15 @@ import {
   getFirestore,
   doc,
   setDoc,
-  collection,
+  collection, 
+  getDoc,
   getDocs,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
   query,
   orderBy,
+  increment,
 } from "firebase/firestore";
 // constants
 import EventSortFilterConstants from '../data/EventSortFilterConstants';
@@ -47,6 +52,25 @@ const HackIdeasAPI = {
     const eventSnapshot = await getDocs(eventQuery);
     const eventList = await eventSnapshot.docs.map(doc => doc.data());
     return eventList;
+  },
+  updateEvent: async(eventId, userId, isFavorite) => {
+    let eventRef = doc(HackIdeasAPIConstants.firebaseDb, "events", eventId);
+ 
+    if(isFavorite) {
+      await updateDoc(eventRef, {
+        likedBy: arrayRemove(userId),
+        favoriteCounter: increment(-1),
+      });
+    } else {
+      await updateDoc(eventRef, {
+        likedBy: arrayUnion(userId),
+        favoriteCounter: increment(1),
+      });
+    }
+  
+    const docSnap = await getDoc(eventRef);
+    const data = docSnap.data();
+    return data;
   },
 };
 

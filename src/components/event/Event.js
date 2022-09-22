@@ -15,6 +15,8 @@ import Favorite from '@mui/icons-material/Favorite';
 import classes from './Event.module.css'
 // constants
 import EventConstants from '../../data/EventConstants';
+// API
+import HackIdeasAPI from '../../api/HackIdeasAPI';
 
 const Event = (props) => {
   const userId = useSelector((state) => state.auth.userId);
@@ -32,6 +34,18 @@ const Event = (props) => {
     return new Date(creationDate).toDateString();
   };
 
+  const toggleFavHander = async () => {
+    let data;
+    try {
+      const eventId = props.eventData.eventId;
+      data = await HackIdeasAPI.updateEvent(eventId, userId, isFavorite);
+    } catch (error) {
+      console.log(error.message || EventConstants.customErrorMsg);
+    }
+    setIsFavorite(!isFavorite);
+    setIsFavoriteCount(data.favoriteCounter);
+  };
+
   return (
     <Card className={classes.event}>
       <CardHeader
@@ -44,6 +58,7 @@ const Event = (props) => {
       <CardActions disableSpacing>
         <IconButton
           aria-label={EventConstants.favoriteAriaLabel}
+          onClick={toggleFavHander}
         >
           {isFavorite ? <Favorite className={classes['favorite-icon']}/> : <FavoriteBorder />}
         </IconButton>
