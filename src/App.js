@@ -1,5 +1,5 @@
 import { Fragment, useEffect} from 'react';
-import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 // components
 import Auth from './components/auth/Auth';
@@ -8,7 +8,6 @@ import Header from './components/header/Header';
 import AddEvent from './components/add-event/AddEvent';
 // store
 import { authActions } from './store/auth-store';
-
 
 function App() {
   const dispatch = useDispatch();
@@ -36,21 +35,23 @@ function App() {
     <Fragment>
       <BrowserRouter>
         <Header />
-        <Route exact path="/">
-          {isAuthenticated ? <Redirect to="/events" /> : <Redirect to="/login" />}
-        </Route>
-        <Route path="/login">
-          {isAuthenticated && <Redirect to="/events" />}
-          {!isAuthenticated && <Auth />}
-        </Route>
-        <Route path="/events">
-          {isAuthenticated && <EventPage />}
-          {!isAuthenticated && <Redirect to="/login" />}
-        </Route>
-        <Route path="/addEvent">
-          {isAuthenticated && <AddEvent />}
-          {!isAuthenticated && <Redirect to="/login" />}
-        </Route>
+        <Switch>
+          <Route path="/login">
+            {isAuthenticated && <Redirect to="/events" />}
+            {!isAuthenticated && <Auth />}
+          </Route>
+          <Route path="/events">
+            {isAuthenticated && <EventPage />}
+            {!isAuthenticated && <Redirect to="/login" />}
+          </Route>
+          <Route path="/addEvent">
+            {isAuthenticated && <AddEvent />}
+            {!isAuthenticated && <Redirect to="/login" />}
+          </Route>
+          <Route exact path="/">
+            {isAuthenticated ? <Redirect to="/events" /> : <Redirect to="/login" />}
+          </Route>
+        </Switch>
       </BrowserRouter>
   </Fragment>
   );
