@@ -1,0 +1,1 @@
+docker build . -t hack-ideas
