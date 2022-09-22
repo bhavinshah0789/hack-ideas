@@ -1,6 +1,7 @@
 import { useState, Fragment } from 'react';
 import { useDispatch } from 'react-redux';
 import { authActions } from '../../store/auth-store';
+import { useHistory } from 'react-router-dom';
 // components
 import BaseDialog from '../base-dialog/BaseDialog';
 import BaseSpinner from '../base-spinner/BaseSpinner';
@@ -18,6 +19,7 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const history = useHistory();
   const emailPattern = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+";
   const passwordPattern = "^[A-Za-z0-9]{6,}$";
 
@@ -103,6 +105,8 @@ const Auth = () => {
 
     try {
       await auth(actionPayload);
+      const redirectUrl = '/events';
+      history.replace(redirectUrl);
     } catch (err) {
       setError(err.message || AuthConstants.customErrorMsg);
     }
