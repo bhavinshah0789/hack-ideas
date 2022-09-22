@@ -5,6 +5,10 @@ import {
   getFirestore,
   doc,
   setDoc,
+  collection,
+  getDocs,
+  query,
+  orderBy,
 } from "firebase/firestore";
 // constants
 import EventSortFilterConstants from '../data/EventSortFilterConstants';
@@ -35,6 +39,14 @@ const HackIdeasAPI = {
   addEvent: async (eventData) => {
     const eventRef = doc(HackIdeasAPIConstants.firebaseDb, "events", eventData.eventId);
     await setDoc(eventRef, eventData);
+  },
+  getEvents: async (sortFilter, setEventList) => {
+    const eventCollection = collection(HackIdeasAPIConstants.firebaseDb, 'events');
+    sortFilter = sortFilter || EventSortFilterConstants.eventCreationDate;
+    let eventQuery = await query(eventCollection, orderBy(sortFilter, "desc"));
+    const eventSnapshot = await getDocs(eventQuery);
+    const eventList = await eventSnapshot.docs.map(doc => doc.data());
+    return eventList;
   },
 };
 
