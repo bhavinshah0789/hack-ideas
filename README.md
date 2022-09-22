@@ -14,3 +14,55 @@ The application should have these features,
 * Show the list of all challenges on home page
 * Allow users to sort challenges with votes count, creation date
 
+## Run Locally
+
+Copy the project files in a directory, say hack-ideas
+
+**Steps:**
+
+Go to the project directory
+
+```bash
+  cd hack-ideas
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Start the server
+
+```bash
+  npm run start
+```
+
+
+## Run on nginx
+
+**Steps:**
+
+Go to the project directory
+
+```bash
+  cd hack-ideas
+```
+
+Run docker build
+
+```bash
+  ./dockerbuild.bat
+```
+
+Run docker container
+
+```bash
+  ./dockerrun.bat
+```
+
+
+## Tech Stack
+
+**Client:** React, Redux
+
